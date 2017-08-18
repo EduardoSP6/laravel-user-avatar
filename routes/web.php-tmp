@@ -12,11 +12,14 @@
  */
 
 Route::get('/', function () {
-		return view('welcome');
+		return redirect('/login');
 	});
+
+Route::get('/users', 'UserController@index')->name('users');
 
 Route::get('/profile', 'UserController@profile')->name('profile');
 Route::post('/profile', 'UserController@update_avatar')->name('update_avatar');
+Route::get('users/delete/{id}', 'UserController@destroy')->name('delete');
 
 Auth::routes();
 

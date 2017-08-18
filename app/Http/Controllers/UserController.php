@@ -8,7 +8,13 @@ use Image;
 
 class UserController extends Controller
 {
-    
+    public function index(){
+        // exibe listagem de usuarios cadastrados ignorando o usuario logado
+        $currUser = Auth::user();
+        $users = \App\User::where('id', '!=', $currUser->id)->paginate(8);
+        return view('users.index', compact('users'));
+    }
+
     public function profile() {
     	$user = Auth::user();	
     	return view('profile', compact('user'));
@@ -30,5 +36,21 @@ class UserController extends Controller
     	}
 
     	return view('profile', compact('user'));
+    }
+
+    public function destroy($id) {
+
+        $user = \App\User::find($id);
+        
+        // Apaga o arquivo da imgem
+        $filename = public_path('/uploads/avatars/' . $user->avatar);
+        
+        if (file_exists($filename) && $user->avatar != 'default.jpg') {
+            unlink($filename);
+        }
+        
+        // deleta o registro
+        $user->delete($id);
+        return redirect( route('users') );
     }
 }
